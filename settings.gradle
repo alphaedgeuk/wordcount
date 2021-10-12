@@ -10,3 +10,6 @@
 rootProject.name = 'wordcount'
 
 include 'lib'
+include 'common'
+include 'web'
+include 'config'

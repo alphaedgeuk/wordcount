@@ -7,8 +7,14 @@ repositories {
 }
 
 dependencies {
+    implementation project(':lib')
+    implementation project(':config')
+
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.13.3'
+    compile group: 'net.openhft', name: 'chronicle-bom', version: '2.19.201', ext: 'pom'
+    compile group: 'net.openhft', name: 'chronicle-queue', version: '5.19.32'
+
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
