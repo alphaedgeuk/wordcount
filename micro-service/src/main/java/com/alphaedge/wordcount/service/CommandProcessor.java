@@ -1,12 +1,12 @@
 package com.alphaedge.wordcount.service;
 
 import com.alphaedge.wordcount.common.api.Commands;
+import com.alphaedge.wordcount.common.api.Events;
 import com.alphaedge.wordcount.common.commands.AddWord;
 import com.alphaedge.wordcount.common.commands.GetWordCount;
 import com.alphaedge.wordcount.common.events.WordAddError;
 import com.alphaedge.wordcount.common.events.WordAdded;
 import com.alphaedge.wordcount.common.events.WordCountQueried;
-import com.alphaedge.wordcount.lib.Translator;
 import com.alphaedge.wordcount.lib.WordCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,13 @@ public class CommandProcessor implements Commands {
     private final WordCountQueried wordCountQueriedFlyWeight = new WordCountQueried();
     private final WordAddError wordAddErrorFlyWeight = new WordAddError();
 
-    private final Translator translator = new BasicTranslator();
-    private final WordCounter wordCounter = new WordCounter(translator);
+    private final Events eventAppender;
+    private final WordCounter wordCounter;
+
+    public CommandProcessor(Events eventAppender, WordCounter wordCounter) {
+        this.eventAppender = eventAppender;
+        this.wordCounter = wordCounter;
+    }
 
     @Override
     public void addWord(AddWord addWord) {
@@ -29,17 +34,16 @@ public class CommandProcessor implements Commands {
         boolean result = wordCounter.addWord(word);
 
         if (!result) {
-            wordAddErrorFlyWeight
-                    .error("Unable to add word")
-                    .word(word)
-                    .send();
-            fjf unit test this
+            eventAppender.error(
+                wordAddErrorFlyWeight
+                        .error("Unable to add word")
+                        .word(word));
             return;
         }
 
-        wordAddedFlyWeight
-                .word(word)
-                .send();
+        eventAppender.wordAdded(
+            wordAddedFlyWeight
+                    .word(word));
     }
 
     @Override
@@ -47,9 +51,9 @@ public class CommandProcessor implements Commands {
         String word = getWordCount.word();
         LOG.info("Querying count for word {}", word);
         long count = wordCounter.getCount(word);
-        wordCountQueriedFlyWeight
-                .count(count)
-                .word(word)
-                .send();
+        eventAppender.wordCountQueried(
+            wordCountQueriedFlyWeight
+                    .count(count)
+                    .word(word));
     }
 }

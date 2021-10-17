@@ -1,5 +1,6 @@
 package com.alphaedge.wordcount.service;
 
+import com.alphaedge.wordcount.lib.BasicTranslator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;

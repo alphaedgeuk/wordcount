@@ -1,9 +1,13 @@
 package com.alphaedge.wordcount.common.api;
 
+import com.alphaedge.wordcount.common.events.WordAddError;
+import com.alphaedge.wordcount.common.events.WordAdded;
 import com.alphaedge.wordcount.common.events.WordCountQueried;
 
 public interface Events {
-    void error(Error error);
+    void error(WordAddError error);
 
-    void wordCount(WordCountQueried wordCountQueried);
+    void wordAdded(WordAdded wordAdded);
+
+    void wordCountQueried(WordCountQueried wordCountQueried);
 }

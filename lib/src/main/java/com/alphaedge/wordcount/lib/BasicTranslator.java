@@ -1,6 +1,4 @@
-package com.alphaedge.wordcount.service;
-
-import com.alphaedge.wordcount.lib.Translator;
+package com.alphaedge.wordcount.lib;
 
 import java.util.HashMap;
 import java.util.Map;
