@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+
+dependencies {
+    implementation project(':lib')
+    implementation project(':config')
+    implementation project(':common')
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: '2.13.3'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testCompile group: 'pl.pragmatists', name: 'JUnitParams', version: '1.0.4'
+}
