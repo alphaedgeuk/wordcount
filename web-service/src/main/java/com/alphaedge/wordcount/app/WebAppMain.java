@@ -15,11 +15,17 @@ public class WebAppMain extends Application {
 
         WebAppMain application = new WebAppMain(ConfigFactory.load());
 
+        EventReader eventReader = new EventReader(application.getEventQueue());
+
+        WordCountQueryService wordCountQueryService = new WordCountQueryService(
+                application.getCommandSender(),
+                eventReader);
+
+
         Javalin app = Javalin.create().start(7000);
         app.get("/", ctx -> ctx.result("Hello World"));
 
-        app.post("/add/{word}", ctx -> {
-            ctx.result("Hello: " + ctx.pathParam("word"));
-        });
+        app.post("/add/{word}", ctx -> ctx.result(wordCountQueryService.addWord(ctx.pathParam("word"))));
+        app.get("/get/{word}", ctx -> ctx.result(wordCountQueryService.getWordCount(ctx.pathParam("word"))));
     }
 }

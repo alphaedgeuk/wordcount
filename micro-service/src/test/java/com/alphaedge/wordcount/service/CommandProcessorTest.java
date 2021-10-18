@@ -27,11 +27,12 @@ public class CommandProcessorTest {
     public void setUp() {
         events = Mockito.mock(Events.class);
         wordCounter = Mockito.mock(WordCounter.class);
-        commandProcessor = new CommandProcessor(events, wordCounter);
+        commandProcessor = new CommandProcessor(wordCounter);
     }
 
     @Test
     public void testAddWord() {
+        commandProcessor.setEventAppender(events);
         Mockito.when(wordCounter.addWord(any())).thenReturn(true);
 
         AddWord addWord = new AddWord();
@@ -49,6 +50,7 @@ public class CommandProcessorTest {
 
     @Test
     public void testGetWordCount() {
+        commandProcessor.setEventAppender(events);
         Mockito.when(wordCounter.getCount(eq("word"))).thenReturn(42L);
 
         GetWordCount getWordCount = new GetWordCount();
@@ -67,6 +69,7 @@ public class CommandProcessorTest {
 
     @Test
     public void testErrorSentOnWordCountReturningFalse() {
+        commandProcessor.setEventAppender(events);
         Mockito.when(wordCounter.addWord(any())).thenReturn(false);
 
         AddWord addWord = new AddWord();
@@ -79,6 +82,22 @@ public class CommandProcessorTest {
         WordAddError error = captor.getValue();
         assertThat(error.error(), equalTo("Unable to add word"));
         assertThat(error.word(), equalTo("word"));
+
+        Mockito.verifyNoMoreInteractions(events);
+    }
+
+
+    @Test
+    public void testWordCountStateUpdatedBeforeEventAppenderSet() {
+        AddWord addWord = new AddWord();
+        addWord.word("word");
+        commandProcessor.addWord(addWord);
+        Mockito.verify(wordCounter).addWord("word");
+
+        GetWordCount getWordCount = new GetWordCount();
+        getWordCount.word("word");
+        commandProcessor.getWordCount(getWordCount);
+        Mockito.verify(wordCounter).getCount("word");
 
         Mockito.verifyNoMoreInteractions(events);
     }

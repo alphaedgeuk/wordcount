@@ -13,11 +13,15 @@ public class CommandSender {
     }
 
     public AddWord addWord(String word) {
-        return addWordFlyWeight.word(word);
+        return addWordFlyWeight
+                .word(word)
+                .appender(commandAppender::addWord);
     }
 
     public GetWordCount getWordCount(String word) {
-        return getWordCountFlyWeight.word(word);
+        return getWordCountFlyWeight
+                .word(word)
+                .appender(commandAppender::getWordCount);
     }
 
 

@@ -2,6 +2,9 @@ package com.alphaedge.wordcount.lib;
 
 import java.util.Objects;
 
+/**
+ * A class to store the number of times a word has been added
+ */
 class WordInstanceCounter {
     private long count;
     private final String word;

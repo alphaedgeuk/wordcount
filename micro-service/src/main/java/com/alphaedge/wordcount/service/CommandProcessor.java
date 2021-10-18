@@ -19,11 +19,11 @@ public class CommandProcessor implements Commands {
     private final WordCountQueried wordCountQueriedFlyWeight = new WordCountQueried();
     private final WordAddError wordAddErrorFlyWeight = new WordAddError();
 
-    private final Events eventAppender;
+    private Events eventAppender;
     private final WordCounter wordCounter;
 
-    public CommandProcessor(Events eventAppender, WordCounter wordCounter) {
-        this.eventAppender = eventAppender;
+    public CommandProcessor(WordCounter wordCounter) {
+        this.eventAppender = new NullEventsAppender();
         this.wordCounter = wordCounter;
     }
 
@@ -55,5 +55,9 @@ public class CommandProcessor implements Commands {
             wordCountQueriedFlyWeight
                     .count(count)
                     .word(word));
+    }
+
+    public void setEventAppender(Events eventAppender) {
+        this.eventAppender = eventAppender;
     }
 }

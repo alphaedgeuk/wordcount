@@ -1,5 +1,8 @@
 package com.alphaedge.wordcount.lib;
 
+/**
+ * Interface for translating words
+ */
 public interface Translator {
 
     /**

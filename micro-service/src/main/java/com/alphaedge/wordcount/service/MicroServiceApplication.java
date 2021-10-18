@@ -10,6 +10,7 @@ import net.openhft.chronicle.bytes.MethodReader;
 
 public class MicroServiceApplication extends Application {
 
+    public static final int BACK_OFF_MILLIS = 100;
     private final MethodReader methodReader;
 
     public MicroServiceApplication(Config config) {
@@ -17,9 +18,7 @@ public class MicroServiceApplication extends Application {
 
         WordCounter wordCounter = new WordCounter(new BasicTranslator());
 
-        Events eventsAppender = getEventQueue().acquireAppender().methodWriter(Events.class);
-
-        CommandProcessor commandProcessor = new CommandProcessor(eventsAppender, wordCounter);
+        CommandProcessor commandProcessor = new CommandProcessor(wordCounter);
 
         methodReader = getCommandsQueue().createTailer().methodReader(commandProcessor);
 
@@ -28,6 +27,11 @@ public class MicroServiceApplication extends Application {
         while (methodReader.readOne()) {
             ;
         }
+
+        Events eventsAppender = getEventQueue().acquireAppender().methodWriter(Events.class);
+
+        // Now replay has finished set the CommandProcessor to append to the Chronicle
+        commandProcessor.setEventAppender(eventsAppender);
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -37,10 +41,10 @@ public class MicroServiceApplication extends Application {
         while (true) {
             application.runOne();
 
-            // For latency sensitive application we would not sleep and busy spin here
-            Thread.sleep(100);
+            // For latency sensitive application we would not sleep and busy spin instead here
+            Thread.sleep(BACK_OFF_MILLIS);
 
-            // todo: Trap signals to exit loop
+            // todo: Trap signals to exit loop on shutdown
         }
     }
 

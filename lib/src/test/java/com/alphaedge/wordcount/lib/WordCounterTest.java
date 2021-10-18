@@ -55,10 +55,10 @@ public class WordCounterTest {
         assertThat(wordCounter.getCount(word), equalTo(0L));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testTranslatorReturnsNull() {
         Mockito.when(translator.translate(any())).thenReturn(null);
-        assertFalse(wordCounter.addWord("test"));
+        wordCounter.addWord("test");
     }
 
     @Test
